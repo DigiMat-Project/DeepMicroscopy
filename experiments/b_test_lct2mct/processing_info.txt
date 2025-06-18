@@ -1,0 +1,12 @@
+DeepMicroscopy Volume Processing
+==================================================
+
+Mode: 3D
+Input: ./data/B_LCT_26.88um_8bu_310x310x310.raw
+Input size: (310, 310, 310)
+Scale factor: 6.4x
+Number of styles: 2
+Translation direction: X→Y
+Patch size: [60, 60, 60]
+Overlap: 10
+Crop border: 5

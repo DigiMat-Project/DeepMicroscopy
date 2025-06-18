@@ -1,0 +1,9 @@
+DeepMicroscopy Volume Processing
+==================================================
+
+Mode: 2D
+Input: ./data/A_MCT_1.0um_8bu_200x200x200.raw
+Input size: (200, 200, 200)
+Scale factor: 5.0x
+Number of styles: 2
+Translation direction: X→Y

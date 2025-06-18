@@ -1,0 +1,108 @@
+# DeepMicroscopy configuration for 2D domain translation (from 3D to 2D)
+
+# Global dimension setting - set to 2 for 2D mode
+dimensions: 2
+
+# Data related configurations
+data:
+  # File format and type
+  input_format: "raw"
+  raw_dtype: "uint8"
+
+  # Path configurations
+  paths:
+    raw_dir: "./data"
+    output_dir: "./experiments/a_train_mct2sem"
+
+  # Source domain (x) data configuration - MicroCT
+  x_domain:
+    filename: "A_MCT_1.0um_8bu_1300x1300x1800.raw"
+    shape: [1800, 1300, 1300]     # [depth, height, width] for 3D source
+    block_size: [200, 200]        # 2D extraction block size
+    num_patches: 100            # number of patches to extract
+
+  # Target domain (y) data configuration - SEM
+  y_domain:
+    filename: "A_SEM_200nm_8bu_25000x25000.raw"
+    shape: [25000, 25000]         # [height, width] for 2D target
+    block_size: [1000, 1000]        # 2D extraction block size
+    num_patches: 100            # number of patches to extract
+
+  # Dataset settings
+  dataset:
+    scale_factor: [5.0, 5.0]      # Optional scaling factor for 2D (no scaling)
+    scale_mode: "nearest"         # Interpolation mode for scaling
+    unaligned: true               # whether to use unaligned data for training
+    normalize: true               # whether to normalize data during training
+
+# Model configuration
+model:
+  name: "munit"                   # model name
+  style_dim: 8                    # style encoding dimension
+
+  # Content encoder configuration
+  content_encoder:
+    n_downsample: 3               # number of downsampling layers
+    n_res: 4                      # number of residual blocks
+    last_nf: 8                    # feature map size
+    norm: "in"                    # normalization type
+    activation: "relu"            # activation function
+    pad_type: "reflect"           # padding type
+
+  # Style encoder configuration
+  style_encoder:
+    n_downsample: 4               # number of downsampling layers
+    norm: "none"                  # normalization type
+    activation: "relu"            # activation function
+    pad_type: "reflect"           # padding type
+
+  # Decoder configuration
+  decoder:
+    n_upsample: 3                 # number of upsampling layers
+    n_res: 4                      # number of residual blocks
+    res_norm: "adain"             # residual block normalization type
+    activation: "relu"            # activation function
+    pad_type: "reflect"           # padding type
+
+  # Discriminator configuration
+  discriminator:
+    n_layers: 4                   # number of layers
+    last_nf: 8                    # feature map size
+    num_scales: 3                 # multi-scale levels
+    norm: "none"                  # normalization type
+    activation: "lrelu"           # activation function
+    pad_type: "reflect"           # padding type
+
+# Training configuration
+training:
+  n_iters: 200000                 # total training iterations
+  batch_size: 8                   # batch size (can be larger for 2D)
+
+  # Optimizer configuration
+  optimizer:
+    type: "adam"                  # optimizer type
+    lr: 0.0001                    # learning rate
+    beta1: 0.5                    # Adam parameter
+    beta2: 0.999                  # Adam parameter
+    weight_decay: 0.0001          # weight decay
+
+  # Learning rate scheduler
+  scheduler:
+    type: "step"                  # scheduler type
+    step_size: 10000              # step size
+    gamma: 0.8                    # decay rate
+
+  # Loss weights
+  loss_weights:
+    gan: 1.0                      # GAN loss weight
+    recon_x: 1.0                  # image reconstruction loss weight
+    recon_s: 2.0                  # style reconstruction loss weight
+    recon_c: 1.0                  # content reconstruction loss weight
+    recon_x_cyc: 1.0              # cycle consistency loss weight
+
+  # Training logs and saving
+  logging:
+    log_step: 100                 # log recording interval
+    image_save_iter: 100          # image saving interval
+    image_display_iter: 100       # image display interval
+    snapshot_save_iter: 5000      # model saving interval

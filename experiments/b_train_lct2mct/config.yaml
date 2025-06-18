@@ -1,0 +1,89 @@
+data:
+  dataset:
+    normalize: true
+    scale_factor:
+    - 6.4
+    - 6.4
+    - 6.4
+    scale_mode: nearest
+    unaligned: true
+  input_format: raw
+  paths:
+    output_dir: ./experiments/b_train_lct2mct
+    raw_dir: ./data
+  raw_dtype: uint8
+  x_domain:
+    block_size:
+    - 25
+    - 50
+    - 50
+    filename: B_LCT_26.88um_8bu_600x600x890.raw
+    num_patches: 100
+    shape:
+    - 890
+    - 600
+    - 600
+  y_domain:
+    block_size:
+    - 160
+    - 320
+    - 320
+    filename: B_MCT_4.20um_8bu_600x600x5700.raw
+    num_patches: 50
+    shape:
+    - 5700
+    - 600
+    - 600
+dimensions: 3
+model:
+  content_encoder:
+    activation: relu
+    last_nf: 8
+    n_downsample: 3
+    n_res: 4
+    norm: in
+    pad_type: reflect
+  decoder:
+    activation: relu
+    n_res: 4
+    n_upsample: 3
+    pad_type: reflect
+    res_norm: adain
+  discriminator:
+    activation: lrelu
+    last_nf: 8
+    n_layers: 4
+    norm: none
+    num_scales: 3
+    pad_type: reflect
+  name: munit
+  style_dim: 8
+  style_encoder:
+    activation: relu
+    n_downsample: 4
+    norm: none
+    pad_type: reflect
+training:
+  batch_size: 1
+  logging:
+    image_display_iter: 100
+    image_save_iter: 100
+    log_step: 100
+    snapshot_save_iter: 5000
+  loss_weights:
+    gan: 1.0
+    recon_c: 1.0
+    recon_s: 5.0
+    recon_x: 1.0
+    recon_x_cyc: 1.0
+  n_iters: 200000
+  optimizer:
+    beta1: 0.5
+    beta2: 0.999
+    lr: 0.0001
+    type: adam
+    weight_decay: 0.0001
+  scheduler:
+    gamma: 0.8
+    step_size: 10000
+    type: step
